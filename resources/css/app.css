@@ -24,3 +24,9 @@
         @apply transition-all duration-200 ease-in-out;
     }
 }
+
+@layer components {
+    .btn-submit {
+        @apply bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 rounded-xl transition-all shadow-sm text-sm;
+    }
+}

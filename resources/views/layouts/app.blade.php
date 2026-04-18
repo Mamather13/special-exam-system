@@ -6,7 +6,7 @@
     <title>EXAMPASS</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
+<body class="bg-[#f9fafb] text-gray-800 font-sans leading-relaxed antialiased">
 
     <nav class="bg-white h-[70px] flex items-center justify-center border-b-2 border-sti-yellow sticky top-0 z-50 ">
         <div class="flex items-center justify-between w-full max-w-[1440px] px-[2%]">
