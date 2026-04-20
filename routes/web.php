@@ -16,6 +16,8 @@ Route::get('/subject', function () {
     return view('teacher-subject');
 })->name('teacher.subject');
 
-
+Route::get('/head', function () {
+    return view('head-dashboard');
+})->name('head.dashboard');
 
 require __DIR__.'/settings.php';
