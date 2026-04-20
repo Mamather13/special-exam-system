@@ -8,10 +8,10 @@
 </head>
 <body class="bg-[#f9fafb] text-gray-800 font-sans leading-relaxed antialiased">
 
-    <nav class="bg-white h-[70px] flex items-center justify-center border-b-2 border-sti-yellow sticky top-0 z-50 ">
+    <nav class="bg-white h-[70px] flex items-center justify-center border-b-2 border-sti-yellow sticky top-0 z-50">
         <div class="flex items-center justify-between w-full max-w-[1440px] px-[2%]">
-        
-            <div class="text-2xl font-black uppercase text-gray-900 whitespace-nowrap tracking-tighter">
+            
+            <div class="text-2xl font-black uppercase text-gray-900 whitespace-nowrap">
                 EXAM<span class="text-sti-yellow">PASS</span>
             </div>
 
@@ -39,11 +39,11 @@
                     <div id="userProfileBtn" class="flex items-center gap-3 py-1.5 px-3 rounded-full hover:bg-gray-100 cursor-pointer transition-colors whitespace-nowrap border border-transparent hover:border-gray-200">
                         <div class="flex flex-col text-left leading-tight">
                             <span class="text-sm font-semibold text-gray-700">Juan Dela Cruz</span>
-                            <span class="text-[11px] text-gray-500  mt-1 tracking-widest">Student</span>
+                            <span class="text-[11px] text-gray-500 mt-1 tracking-widest uppercase">Student</span>
                         </div>
-                        <div class="w-9 h-9 rounded-full bg-secondary-yellow flex items-center justify-center font-bold text-[15px] text-gray-700 shadow-sm">
-    JD
-</div>
+                        <div class="w-9 h-9 rounded-full bg-yellow-400 flex items-center justify-center font-bold text-[15px] text-gray-700 shadow-sm">
+                            JD
+                        </div>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5 text-gray-500">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25 12 15.75 4.5 8.25" />
                         </svg>
@@ -51,28 +51,25 @@
 
                     <div id="profileDropdown" class="hidden absolute top-[calc(100%+15px)] right-0 w-48 bg-white rounded-xl shadow-xl z-50 py-1.5 border border-gray-100">
                         <ul class="list-none m-0 p-0">
-    <li>
-        <a href="#" class="flex items-center gap-2.5 py-2.5 px-4 text-gray-600 no-underline text-sm hover:bg-yellow-50 hover:text-sti-yellow-dark transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span>Settings</span>
-        </a>
-    </li>
+                            <li>
+                                <a href="#" class="flex items-center gap-2.5 py-2.5 px-4 text-gray-600 no-underline text-sm hover:bg-yellow-50 hover:text-sti-yellow-dark transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    <span>Settings</span>
+                                </a>
+                            </li>
 
-    <li>
-        <form method="POST" action="/logout">
-            @csrf
-            <button type="submit" class="w-full flex items-center gap-2.5 py-2.5 px-4 text-red-600 text-sm hover:bg-red-50 transition-all text-left">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4 text-red-500">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 5.25v13.5A2.25 2.25 0 006.75 21h6.75A2.25 2.25 0 0015.75 18.75V15m-3-3H21m0 0l-3-3m3 3l-3 3" />
-                </svg>
-                <span>Sign Out</span>
-            </button>
-        </form>
-    </li>
-</ul>
+                            <li>
+                                <a href="{{ route('landing.page') }}" class="flex items-center gap-2.5 py-2.5 px-4 text-gray-600 no-underline text-sm hover:bg-yellow-50 hover:text-sti-yellow-dark transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4 text-red-500">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 5.25v13.5A2.25 2.25 0 006.75 21h6.75A2.25 2.25 0 0015.75 18.75V15m-3-3H21m0 0l-3-3m3 3l-3 3" />
+                                    </svg>
+                                    <span>Sign Out</span>
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 

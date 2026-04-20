@@ -2,11 +2,22 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+// 1. Root Redirect (Prevents 404 on the home page)
+Route::get('/', function () {
+    return redirect()->route('landing.page');
 });
+
+// 2. The Landing Page
+Route::get('/landing', function () {
+    return view('landing-page');
+})->name('landing.page'); 
+
+
+// 4. Portal Routes (Consider adding 'auth' middleware later)
+Route::get('/student', function () {
+    return view('student-dashboard');
+})->name('student.dashboard');
 
 Route::get('/teacher', function () {
     return view('teacher-dashboard');

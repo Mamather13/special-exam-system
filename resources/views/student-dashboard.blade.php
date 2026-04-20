@@ -1,22 +1,31 @@
 <x-layouts.app>
-    <main class="mx-auto max-w-[1440px] px-6 py-12">
+    
         
        
-            <button id="openModalBtn" class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-black py-3.5 px-7 rounded-xl shadow-sm transition-all flex items-center gap-2 whitespace-nowrap text-sm">
-                <span class="text-xl leading-none">+</span> New Registration
-            </button>
+<div >
+    
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">My Special Exam Applications</h1>
+            <p class="text-gray-500 mt-1">Manage and track your special exam requests</p>
         </div>
 
-        <div id="emptyState" class="flex flex-col items-center justify-center py-20 border-2 border-dashed border-gray-100 rounded-[2rem] bg-gray-50/30">
-            <div class="bg-gray-100 p-4 rounded-full mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-gray-400">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                </svg>
-            </div>
-            <p class="text-gray-500 font-bold text-lg italic">No form submitted</p>
-            <p class="text-gray-400 text-sm">Register a new exam to see your status here.</p>
-        </div>
+        <button id="openModalBtn" class="bg-[#fedc00] hover:bg-yellow-400 text-gray-900 font-black py-3.5 px-7 rounded-xl shadow-sm transition-all flex items-center gap-2 whitespace-nowrap text-sm">
+            <span class="text-xl leading-none">+</span> New Registration
+        </button>
+    </div>
 
+    <div id="emptyState" class="flex flex-col items-center justify-center py-24 border-2 border-dashed border-gray-200 rounded-[2.5rem] bg-gray-50/30">
+        <div class="bg-gray-100 p-5 rounded-full mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-gray-400">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+            </svg>
+        </div>
+        <p class="text-gray-500 font-bold text-xl italic mb-1">No form submitted</p>
+        <p class="text-gray-400 text-base">Register a new exam to see your status here.</p>
+    </div>
+
+</div>
         <div id="applicationsGrid" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
             </div>
 
