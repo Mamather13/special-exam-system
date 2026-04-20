@@ -1,4 +1,6 @@
 import './bootstrap';
+import 'flowbite';
+import './teacher-subject.js';
 import Alpine from 'alpinejs'
 window.Alpine = Alpine
 Alpine.start()

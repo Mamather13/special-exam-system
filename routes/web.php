@@ -8,4 +8,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });
 
+Route::get('/teacher', function () {
+    return view('teacher-dashboard');
+})->name('teacher.dashboard');
+
+Route::get('/subject', function () {
+    return view('teacher-subject');
+})->name('teacher.subject');
+
+
+
 require __DIR__.'/settings.php';

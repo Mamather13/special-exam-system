@@ -1,15 +1,7 @@
 <x-layouts.app>
     <main class="mx-auto max-w-[1440px] px-6 py-12">
         
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-            <div>
-                <h1 class="text-4xl font-black text-gray-900 tracking-tight">
-                    My Special Exam Applications
-                </h1>
-                <p class="text-gray-500 mt-2 font-medium">
-                    Manage and track your special exam requests
-                </p>
-            </div>
+       
             <button id="openModalBtn" class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-black py-3.5 px-7 rounded-xl shadow-sm transition-all flex items-center gap-2 whitespace-nowrap text-sm">
                 <span class="text-xl leading-none">+</span> New Registration
             </button>
