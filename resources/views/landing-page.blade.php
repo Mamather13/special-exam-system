@@ -50,7 +50,7 @@
 
         <div id="portalModal" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             
-            <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="togglePortalModal()"></div>
+            <div class="fixed inset-0 bg-black/70 transition-opacity" onclick="togglePortalModal()"></div>
 
             <div class="flex items-center justify-center min-h-screen p-4">
                 
@@ -76,7 +76,7 @@
                             <i class="fa-solid fa-id-card-clip"></i> Program Head
                         </a>
 
-                        <a href="#" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-4 px-6 rounded-xl text-center transition-all hover:scale-[1.02] flex items-center justify-center gap-3">
+                        <a href="{{ route('registrar.dashboard') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-4 px-6 rounded-xl text-center transition-all hover:scale-[1.02] flex items-center justify-center gap-3">
                             <i class="fa-solid fa-file-invoice text-gray-400"></i> Registrar
                         </a>
 

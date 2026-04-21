@@ -31,4 +31,16 @@ Route::get('/head', function () {
     return view('head-dashboard');
 })->name('head.dashboard');
 
+Route::get('/registrar/dashboard', function () {
+    return view('registrar.dashboard'); // Points to registrar/dashboard.blade.php
+})->name('registrar.dashboard');
+
+Route::get('/registrar/courses', function () {
+    return view('registrar.courses');
+})->name('registrar.courses');
+
+Route::get('/registrar/submissions/{course}', function ($course) {
+    return view('registrar.submissions', ['course' => $course]);
+})->name('registrar.submissions');
+
 require __DIR__.'/settings.php';
