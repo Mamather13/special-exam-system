@@ -131,45 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. SUBMISSION LOGIC ---
     submitFormBtn?.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        const subject = document.getElementById('subject')?.value || "Unnamed Subject";
-        const teacher = document.getElementById('teacher')?.value || "Instructor";
-        const section = document.getElementById('section')?.value || "N/A";
-        const code = "IT-" + Math.floor(Math.random() * 900 + 100);
-
-        const card = document.createElement('div');
-        card.className = "bg-white p-8 rounded-[1.5rem] shadow-sm border border-gray-100 flex items-center justify-between group cursor-pointer hover:shadow-md transition-all";
-        
-        // Escape single quotes for safety
-        const sSub = subject.replace(/'/g, "\\'");
-        const sTea = teacher.replace(/'/g, "\\'");
-        const sSec = section.replace(/'/g, "\\'");
-        
-        // This attribute will now find the global function defined at the top
-        card.setAttribute('onclick', `openStatusModal('${sSub}', '${code}', '${sTea}', '${sSec}')`);
-
-        card.innerHTML = `
-            <div class="space-y-5">
-                <div>
-                    <h2 class="text-xl font-bold text-gray-900 tracking-tight">${subject}</h2>
-                    <p class="text-gray-400 text-sm mt-1 font-medium">${code} • Prof. ${teacher} • ${section}</p>
-                </div>
-                <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-[11px] font-bold border border-blue-100 uppercase tracking-wide">
-                    Submitted
-                </div>
-            </div>
-            <div class="text-gray-300 group-hover:text-gray-900 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-            </div>
-        `;
-
-        applicationsGrid?.appendChild(card);
-        applicationsGrid?.classList.remove('hidden');
-        emptyState?.classList.add('hidden');
-
-        closeRegModal();
+    
+        document.getElementById('registrationForm').submit();
+    
     });
 });
