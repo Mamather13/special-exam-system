@@ -104,6 +104,8 @@ return [
 
     'class_path' => app_path('Livewire'),
 
+
+    'asset_url' => null,
     /*
     |---------------------------------------------------------------------------
     | View Path
