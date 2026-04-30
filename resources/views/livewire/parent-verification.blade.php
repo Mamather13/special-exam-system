@@ -1,4 +1,4 @@
-{{-- resources/views/livewire/parent-verification.blade.php --}}
+﻿{{-- resources/views/livewire/parent-verification.blade.php --}}
 <div
     x-data="faceVerify()"
     x-init="init()"
@@ -15,29 +15,25 @@
 
             <div class="mb-4">
                 <label class="mb-1 block text-sm font-medium text-gray-700">
-                    Parent ID — Front <span class="text-red-500">*</span>
+                    Parent ID &mdash; Front <span class="text-red-500">*</span>
                 </label>
-
-                {{-- Wire upload for backend --}}
                 <input type="file" wire:model="parentIdFront" accept="image/*"
                     id="parentIdFrontFile"
+                    x-on:change="handleIdFrontUpload($event)"
                     class="block w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm
                            file:mr-3 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-1
                            file:text-sm file:font-medium file:text-blue-700 hover:file:bg-blue-100">
-
                 @error('parentIdFront')
                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                 @enderror
-
-                @if ($parentIdFront)
-                    <img src="{{ $parentIdFront->temporaryUrl() }}"
-                    class="mt-2 h-24 w-auto rounded-lg border border-gray-200 object-cover">
-                @endif
+                <img id="id-front-preview" src="" alt="ID Front Preview"
+                    class="mt-2 h-24 w-auto rounded-lg border border-gray-200 object-cover hidden"
+                    crossorigin="anonymous">
             </div>
 
             <div class="mb-4">
                 <label class="mb-1 block text-sm font-medium text-gray-700">
-                    Parent ID — Back <span class="text-red-500">*</span>
+                    Parent ID &mdash; Back <span class="text-red-500">*</span>
                 </label>
                 <input type="file" wire:model="parentIdBack" accept="image/*"
                     class="block w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm
@@ -62,8 +58,6 @@
             <button type="button"
                 wire:loading.attr="disabled"
                 wire:click="proceedToLiveness"
-                wire:loading.attr="disabled"
-                wire:target="parentIdFront"
                 class="mt-2 w-full rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold
                        text-white shadow-sm transition hover:bg-blue-700 active:scale-95 disabled:opacity-50">
                 <span wire:loading.remove wire:target="proceedToLiveness">Continue to Face Verification</span>
@@ -93,7 +87,7 @@
                         'bg-blue-100 text-blue-700': idx === currentChallenge && !ch.done,
                         'bg-gray-100 text-gray-500': idx > currentChallenge && !ch.done
                     }">
-                    <span x-text="ch.done ? 'Done' : (idx === currentChallenge ? '▶' : '○')"></span>
+                    <span x-text="ch.done ? 'Done' : (idx === currentChallenge ? '>' : 'o')"></span>
                     <span x-text="ch.label"></span>
                 </span>
             </template>
@@ -132,14 +126,14 @@
     @if($step === 'done')
     <div class="rounded-xl border shadow-sm p-5 {{ $faceVerified ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50' }}">
         <div class="flex items-start gap-3">
-            <div class="text-2xl">{{ $faceVerified ? '✓' : '✗' }}</div>
+            <div class="text-2xl">{{ $faceVerified ? '&#10003;' : '&#10007;' }}</div>
             <div>
                 <p class="font-semibold text-sm {{ $faceVerified ? 'text-green-700' : 'text-red-700' }}">
                     {{ $faceVerified ? 'Identity Verified Successfully' : 'Verification Failed' }}
                 </p>
                 <p class="text-xs mt-0.5 {{ $faceVerified ? 'text-green-600' : 'text-red-600' }}">
                     Match score: {{ number_format($matchScore, 1) }}%
-                    &nbsp;·&nbsp;
+                    &nbsp;&middot;&nbsp;
                     Liveness: {{ $livenessPassedFlag ? 'Passed' : 'Failed' }}
                 </p>
                 @if(!$faceVerified)
@@ -156,15 +150,55 @@
     </div>
     @endif
 
-
     <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.js"></script>
 
     <script>
-    // ─── Global file store (survives Livewire re-renders, no size limit) ──────
-    
+    // ── Image compressor (runs before wire:model upload, keeps files under 1MB) ──
+    function compressImage(file, maxSizeMB = 1, maxWidthPx = 1200) {
+        return new Promise((resolve) => {
+            if (file.size <= maxSizeMB * 1024 * 1024) { resolve(file); return; }
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                URL.revokeObjectURL(url);
+                const scale   = Math.min(1, maxWidthPx / img.width);
+                const canvas  = document.createElement('canvas');
+                canvas.width  = Math.round(img.width  * scale);
+                canvas.height = Math.round(img.height * scale);
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob((blob) => {
+                    const compressed = new File([blob], file.name, { type: 'image/jpeg' });
+                    console.log('Compressed: ' + Math.round(file.size/1024) + 'KB -> ' + Math.round(compressed.size/1024) + 'KB');
+                    resolve(compressed);
+                }, 'image/jpeg', 0.82);
+            };
+            img.src = url;
+        });
+    }
 
+    // ── Handles ID Front file pick: compress -> preview -> trigger wire:model ──
+    async function handleIdFrontUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-    // ─── Alpine component ─────────────────────────────────────────────────────
+        const compressed = await compressImage(file);
+
+        // Show preview
+        if (window._idFrontObjectURL) URL.revokeObjectURL(window._idFrontObjectURL);
+        window._idFrontObjectURL = URL.createObjectURL(compressed);
+        const preview = document.getElementById('id-front-preview');
+        if (preview) { preview.src = window._idFrontObjectURL; preview.classList.remove('hidden'); }
+
+        // Replace the file input value with the compressed file so wire:model uploads it
+        const input = document.getElementById('parentIdFrontFile');
+        const dt = new DataTransfer();
+        dt.items.add(compressed);
+        input.files = dt.files;
+
+        console.log('ID front ready: ' + compressed.name + ' (' + Math.round(compressed.size/1024) + 'KB)');
+    }
+
+    // ── Alpine component ──────────────────────────────────────────────────────
     function faceVerify() {
         return {
             modelsLoaded:      false,
@@ -184,15 +218,9 @@
             EAR_THRESHOLD: 0.22, POSE_THRESHOLD: 8,
 
             async init() {
-                // Watch for Livewire step changes
                 this.$watch('$wire.step', async (val) => {
                     if (val === 'liveness') await this.loadModels();
                 });
-            },
-
-            // ── Called by the Continue button ──────────────────────────────
-            async proceedToLiveness() {
-                await this.$wire.call('proceedToLiveness');
             },
 
             async loadModels() {
@@ -213,43 +241,46 @@
             },
 
             async extractIdFace() {
-    // Get the temporary URL generated by Livewire after wire:model upload
-    const tempUrl = await this.$wire.get('idFrontTempUrl');
+                // Use Livewire temporaryUrl() via the computed property
+                const tempUrl = await this.$wire.get('idFrontTempUrl');
 
-    if (!tempUrl) {
-        this.statusMessage = 'ID image not found. Please go back and re-upload.';
-        return;
-    }
+                // Fallback to in-memory object URL if Livewire temp not ready
+                const imgSrc = tempUrl || window._idFrontObjectURL;
 
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = tempUrl;
+                if (!imgSrc) {
+                    this.statusMessage = 'ID image not found. Please go back and re-upload.';
+                    return;
+                }
 
-    await new Promise((resolve, reject) => {
-        img.onload  = resolve;
-        img.onerror = () => reject(new Error('Failed to load ID image'));
-    });
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.src = imgSrc;
 
-    try {
-        const detection = await faceapi
-            .detectSingleFace(img, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.3 }))
-            .withFaceLandmarks()
-            .withFaceDescriptor();
+                await new Promise((resolve, reject) => {
+                    img.onload  = resolve;
+                    img.onerror = () => reject(new Error('Failed to load ID image'));
+                });
 
-        if (!detection) {
-            this.statusMessage = 'No face detected in ID. Please go back and use a clearer photo.';
-            return;
-        }
+                try {
+                    const detection = await faceapi
+                        .detectSingleFace(img, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.3 }))
+                        .withFaceLandmarks()
+                        .withFaceDescriptor();
 
-        this.idDescriptor = detection.descriptor;
-        this.statusMessage = 'ID face extracted. Starting camera...';
-        await this.startCamera();
+                    if (!detection) {
+                        this.statusMessage = 'No face detected in ID. Please go back and use a clearer photo.';
+                        return;
+                    }
 
-    } catch(e) {
-        this.statusMessage = 'Error reading ID: ' + e.message;
-        console.error(e);
-    }
-},
+                    this.idDescriptor = detection.descriptor;
+                    this.statusMessage = 'ID face extracted. Starting camera...';
+                    await this.startCamera();
+
+                } catch(e) {
+                    this.statusMessage = 'Error reading ID: ' + e.message;
+                    console.error(e);
+                }
+            },
 
             async startCamera() {
                 this.videoEl  = document.getElementById('liveness-video');
@@ -295,7 +326,7 @@
                             }
                         }
                     } else {
-                        this.statusMessage = 'Face not detected — please look at the camera.';
+                        this.statusMessage = 'Face not detected - please look at the camera.';
                     }
                 } catch(e) { console.error('Detection error:', e); }
 
@@ -356,10 +387,13 @@
                 const verified = allDone && avgScore >= 75;
 
                 this.statusMessage = verified
-                    ? `Verification complete! Match: ${avgScore}%`
-                    : `Verification failed. Match: ${avgScore}%. Please try again.`;
+                    ? 'Verification complete! Match: ' + avgScore + '%'
+                    : 'Verification failed. Match: ' + avgScore + '%. Please try again.';
 
-                // Clean up object URL after we're done with it
+                if (window._idFrontObjectURL) {
+                    URL.revokeObjectURL(window._idFrontObjectURL);
+                    window._idFrontObjectURL = null;
+                }
 
                 this.$wire.call('completeFaceVerification', {
                     faceVerified:   verified,
@@ -380,6 +414,13 @@
             },
         };
     }
+
+    document.addEventListener('clear-id-storage', () => {
+        if (window._idFrontObjectURL) {
+            URL.revokeObjectURL(window._idFrontObjectURL);
+            window._idFrontObjectURL = null;
+        }
+    });
     </script>
 
 </div>
