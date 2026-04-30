@@ -7,9 +7,17 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
+
+    public function boot(): void
+    {
+    if (env('APP_ENV') === 'production') {
+        URL::forceScheme('https');
+    }
+    }
     /**
      * Register any application services.
      */
