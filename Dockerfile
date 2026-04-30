@@ -1,25 +1,29 @@
 FROM php:8.2-cli
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git unzip curl libpng-dev libonig-dev libxml2-dev zip
+    git unzip curl libpng-dev libonig-dev libxml2-dev zip libzip-dev
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    zip
 
-# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# Copy project
 COPY . .
 
-# Install Laravel dependencies
-RUN composer install --no-dev --optimize-autoloader
+# IMPORTANT: avoid scripts breaking install
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Laravel setup
-RUN php artisan key:generate || true
+# Then run Laravel commands separately
+RUN php artisan config:clear || true
+RUN php artisan cache:clear || true
 
 EXPOSE 8000
 
