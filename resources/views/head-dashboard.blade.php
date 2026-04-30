@@ -1,219 +1,462 @@
 <x-layouts.app>
-    <div class="max-w-7xl mx-auto p-8 font-sans">
-        
-        <div class="mb-8">
-            <h1 class="text-4xl font-black text-gray-900 tracking-tight">
-                Program Head Dashboard
-            </h1>
-            <p class="text-gray-500 mt-2 font-medium">
-                Manage special exam approvals and student records
-            </p>
-        </div>
+<div class="max-w-7xl mx-auto p-8 font-sans">
 
-        <div class="border-b border-gray-200 mb-8">
-            <nav class="-mb-px flex space-x-8" aria-label="Tabs" id="dashboardTabs">
-                <button onclick="switchTab(this, 'first-approach-view')" 
-                        class="tab-btn active-tab border-[#F1C40F] text-gray-900 border-b-[3px] py-4 px-1 text-sm font-bold flex items-center gap-2 transition-all">
-                    First Approach
-                    <span class="bg-[#EF4444] text-white text-[11px] font-bold px-2 py-0.5 rounded-full min-w-[20px]">4</span>
-                </button>
-
-                <button onclick="switchTab(this, 'final-approval-view')" 
-                        class="tab-btn border-transparent text-gray-500 border-b-[3px] py-4 px-1 text-sm font-medium flex items-center gap-2 transition-all">
-                    Final Approval
-                    <span class="bg-[#EF4444] text-white text-[11px] font-bold px-2 py-0.5 rounded-full min-w-[20px]">3</span>
-                </button>
-
-                <button onclick="switchTab(this, 'department-lists-view')" 
-                        class="tab-btn border-transparent text-gray-500 border-b-[3px] py-4 px-1 text-sm font-medium transition-all">
-                    Department Lists
-                </button>
-            </nav>
-        </div>
-
-        <div id="first-approach-view" class="tab-content">
-            <div class="mb-6">
-                <h2 class="text-lg font-bold text-gray-800">Select Department</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <x-card-subject title="Mathematics 101" :count="3" :route="route('teacher.subject')" />
-                <x-card-subject title="English 102" :count="2" :route="route('teacher.subject')" />
-                <x-card-subject title="Chemistry 101" :count="0" :route="route('teacher.subject')" />
-            </div>
-        </div>
-
-        <div id="final-approval-view" class="tab-content hidden">
-            <div class="p-12 bg-white rounded-2xl border border-dashed border-gray-200 text-center">
-                <div class="text-gray-400 mb-2 text-4xl"><i class="fa-solid fa-clock-rotate-left"></i></div>
-                <p class="text-gray-500 font-medium">No final approvals pending at the moment.</p>
-            </div>
-        </div>
-
-        <div id="department-lists-view" class="tab-content hidden">
-    
-    <div id="term-selection-view">
-        <div class="mb-6">
-            <h2 class="text-lg font-bold text-gray-800">Select Academic Term</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <button onclick="showDetails('Prelim')" class="text-left group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all">
-                <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#FFF9D6] transition-colors">
-                    <i class="fa-solid fa-file text-gray-400 group-hover:text-[#F1C40F]"></i>
-                </div>
-                <h3 class="font-bold text-gray-900 text-lg">Prelim</h3>
-                <p class="text-sm text-gray-500">View completed applications for Prelims</p>
-            </button>
-            
-            <button onclick="showDetails('Mid-term')" class="text-left group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all">
-                <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#FFF9D6] transition-colors">
-                    <i class="fa-solid fa-file-invoice text-gray-400 group-hover:text-[#F1C40F]"></i>
-                </div>
-                <h3 class="font-bold text-gray-900 text-lg">Mid-term</h3>
-                <p class="text-sm text-gray-500">View completed applications for Mid-terms</p>
-            </button>
-
-            <button onclick="showDetails('Pre-final')" class="text-left group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all">
-                <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#FFF9D6] transition-colors">
-                    <i class="fa-solid fa-file-signature text-gray-400 group-hover:text-[#F1C40F]"></i>
-                </div>
-                <h3 class="font-bold text-gray-900 text-lg">Pre-final</h3>
-                <p class="text-sm text-gray-500">View completed applications for Pre-finals</p>
-            </button>
-
-            <button onclick="showDetails('Finals')" class="text-left group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all">
-                <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#FFF9D6] transition-colors">
-                    <i class="fa-solid fa-graduation-cap text-gray-400 group-hover:text-[#F1C40F]"></i>
-                </div>
-                <h3 class="font-bold text-gray-900 text-lg">Finals</h3>
-                <p class="text-sm text-gray-500">View completed applications for Finals</p>
-            </button>
-        </div>
+    {{-- Header --}}
+    <div class="mb-8">
+        <h1 class="text-4xl font-black text-gray-900 tracking-tight">Program Head Dashboard</h1>
+        <p class="text-gray-500 mt-2 font-medium">Manage special exam approvals and student records</p>
     </div>
 
-    <div id="details-view" class="hidden">
-        <div class="flex items-center gap-6 mb-6">
-            <button onclick="showTerms()" class="flex flex-col items-center justify-center w-21 h-14 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors bg-white shadow-sm">
-                <i class="fa-solid fa-arrow-left text-gray-700"></i>
+    {{-- Tabs --}}
+    <div class="border-b border-gray-200 mb-8">
+        <nav class="-mb-px flex space-x-8" id="dashboardTabs">
+            <button onclick="switchTab(this, 'first-approach-view')"
+                    class="tab-btn active-tab border-[#F1C40F] text-gray-900 border-b-[3px] py-4 px-1 text-sm font-bold flex items-center gap-2 transition-all">
+                First Approach
+                <span class="bg-[#EF4444] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">{{ $totalPending }}</span>
+            </button>
+            <button onclick="switchTab(this, 'final-approval-view')"
+                    class="tab-btn border-transparent text-gray-500 border-b-[3px] py-4 px-1 text-sm font-medium flex items-center gap-2 transition-all">
+                Final Approval
+                <span class="bg-[#EF4444] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">{{ $totalFinal }}</span>
+            </button>
+            <button onclick="switchTab(this, 'department-lists-view')"
+                    class="tab-btn border-transparent text-gray-500 border-b-[3px] py-4 px-1 text-sm font-medium transition-all">
+                Department Lists
+            </button>
+        </nav>
+    </div>
+
+    {{-- FIRST APPROACH TAB --}}
+<div id="first-approach-view" class="tab-content">
+
+    {{-- Course List View --}}
+    <div id="course-list-view">
+        <div class="mb-6">
+            <h2 class="text-lg font-bold text-gray-800">Pending Requests by Course</h2>
+            <p class="text-sm text-gray-500 mt-1">Select a course to review student requests</p>
+        </div>
+
+        @if($courses->isEmpty())
+            <div class="p-12 bg-white rounded-2xl border border-dashed border-gray-200 text-center">
+                <p class="text-gray-500 font-medium">No pending requests at the moment.</p>
+            </div>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @foreach($courses as $course)
+                <button onclick="showCourseRequests('{{ $course->program }}')"
+                   class="group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all text-left block w-full">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center group-hover:bg-yellow-100 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-yellow-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.966 8.966 0 0 0-6 2.292m0-14.25v14.25" />
+                            </svg>
+                        </div>
+                        @if($course->total > 0)
+                            <span class="bg-red-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-full">{{ $course->total }}</span>
+                        @endif
+                    </div>
+                    <h3 class="font-bold text-gray-900 text-lg">{{ $course->program }}</h3>
+                    <p class="text-sm mt-1 {{ $course->total > 0 ? 'text-red-500 font-medium' : 'text-gray-400' }}">
+                        {{ $course->total > 0 ? $course->total . ' pending approval' . ($course->total > 1 ? 's' : '') : 'No pending requests' }}
+                    </p>
+                </button>
+                @endforeach
+            </div>
+        @endif
+    </div>
+
+    {{-- Course Requests Detail View --}}
+    <div id="course-requests-view" class="hidden">
+        <div class="flex items-center gap-4 mb-6">
+            <button onclick="backToCourses()" class="flex flex-col items-center justify-center w-16 h-14 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors bg-white shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-700">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
                 <span class="text-[10px] font-bold text-gray-900 mt-1 uppercase">Back</span>
             </button>
             <div>
-                <h2 class="text-3xl font-black text-gray-900" id="selected-term-title">Prelim - Completed Applications</h2>
-                <div class="mt-2 bg-[#FFF1F1] border border-[#FEE2E2] px-3 py-1.5 rounded-lg flex items-center gap-2 w-fit">
-                    <i class="fa-solid fa-circle-exclamation text-[#EF4444] text-xs"></i>
-                    <p class="text-[11px] text-[#B91C1C] font-medium">Deadline of submission for the list of students who will take the special exam: <span class="font-bold underline">March 15, 2026</span></p>
-                </div>
-            </div>
-            <div class="ml-auto">
-                <button class="bg-[#2ecc71] hover:bg-[#27ae60] text-white px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-sm">
-                    <i class="fa-solid fa-file-excel"></i> Export All to Excel
-                </button>
+                <h2 class="text-2xl font-black text-gray-900" id="course-title">BSIT</h2>
+                <p class="text-sm text-gray-500 mt-1">Pending special exam requests</p>
             </div>
         </div>
 
-        <div class="flex border-b border-gray-200 mb-8 space-x-12">
-            <button onclick="switchSubTab(this, 'paid-table')" class="sub-tab-btn active-sub-tab border-[#F1C40F] border-b-4 py-4 text-[13px] font-black text-gray-900 tracking-wide uppercase">
-                Paid Special Exam
-            </button>
-            <button onclick="switchSubTab(this, 'summary-table')" class="sub-tab-btn border-transparent border-b-4 py-4 text-[13px] font-bold text-gray-400 hover:text-gray-600 transition-all tracking-wide uppercase">
-                Summary
-            </button>
-            <button onclick="switchSubTab(this, 'waived-table')" class="sub-tab-btn border-transparent border-b-4 py-4 text-[13px] font-bold text-gray-400 hover:text-gray-600 transition-all tracking-wide uppercase">
-                Waived Fee (Valid Reason)
-            </button>
-        </div>
-
-        <div id="paid-table" class="sub-content bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
             <table class="w-full text-left">
-                <thead class="bg-gray-50/50 border-b border-gray-100">
+                <thead class="bg-gray-50 border-b border-gray-100">
                     <tr>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Date Applied</th>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Student Name</th>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Section</th>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Subject / Course Title</th>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Subject Code</th>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Program / Strand</th>
+                        <th class="py-4 px-6 text-[12px] font-bold text-gray-900 uppercase">Student</th>
+                        <th class="py-4 px-6 text-[12px] font-bold text-gray-900 uppercase">Student No.</th>
+                        <th class="py-4 px-6 text-[12px] font-bold text-gray-900 uppercase">Subject</th>
+                        <th class="py-4 px-6 text-[12px] font-bold text-gray-900 uppercase">Section</th>
+                        <th class="py-4 px-6 text-[12px] font-bold text-gray-900 uppercase">Exam Type</th>
+                        <th class="py-4 px-6 text-[12px] font-bold text-gray-900 uppercase">Term</th>
+                        <th class="py-4 px-6 text-[12px] font-bold text-gray-900 uppercase">Reason</th>
+                        <th class="py-4 px-6 text-[12px] font-bold text-gray-900 uppercase">Date</th>
+                        <th class="py-4 px-6 text-[12px] font-bold text-gray-900 uppercase">Documents</th>
+                        <th class="py-4 px-6 text-[12px] font-bold text-gray-900 uppercase">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="py-5 px-8 text-sm text-gray-500">20/02/2026</td>
-                        <td class="py-5 px-8 text-sm font-black text-gray-900">Gole Cruz, Holly Klein D.</td>
-                        <td class="py-5 px-8 text-sm text-gray-600">BSHM 2-203</td>
-                        <td class="py-5 px-8 text-sm text-gray-600">Science, Technology, and Society</td>
-                        <td class="py-5 px-8 text-sm text-gray-500 uppercase">GEDC1013</td>
-                        <td class="py-5 px-8 text-sm text-gray-600 font-bold">BSIT</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="py-5 px-8 text-sm text-gray-500">24/02/2026</td>
-                        <td class="py-5 px-8 text-sm font-black text-gray-900">Sumayao, Clarenz Josef</td>
-                        <td class="py-5 px-8 text-sm text-gray-600">BSIT 2-202</td>
-                        <td class="py-5 px-8 text-sm text-gray-600">Systems Integration and Architecture</td>
-                        <td class="py-5 px-8 text-sm text-gray-500 uppercase">INTE1021</td>
-                        <td class="py-5 px-8 text-sm text-gray-600 font-bold">BSIT</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div id="summary-table" class="sub-content hidden bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-gray-50/50 border-b border-gray-100">
-                    <tr>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Subject Code</th>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Subject / Course</th>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase text-right">Count</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="py-5 px-8 text-sm text-gray-500 font-bold uppercase">ACCT1002</td>
-                        <td class="py-5 px-8 text-sm text-gray-900">Conceptual Framework and Accounting Standards</td>
-                        <td class="py-5 px-8 text-sm text-gray-900 font-black text-right">1</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="py-5 px-8 text-sm text-gray-500 font-bold uppercase">CBMC1003</td>
-                        <td class="py-5 px-8 text-sm text-gray-900">Strategic Management</td>
-                        <td class="py-5 px-8 text-sm text-gray-900 font-black text-right">3</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="py-5 px-8 text-sm text-gray-500 font-bold uppercase">CTHC1006</td>
-                        <td class="py-5 px-8 text-sm text-gray-900">Philippine Culture and Tourism Geography</td>
-                        <td class="py-5 px-8 text-sm text-gray-900 font-black text-right">10</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div id="waived-table" class="sub-content hidden bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-gray-50/50 border-b border-gray-100">
-                    <tr>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Date of Application</th>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Student Name</th>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Section</th>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Course/Subject Title</th>
-                        <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Reason / Message</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="py-5 px-8 text-sm text-gray-500">20/02/2026</td>
-                        <td class="py-5 px-8 text-sm font-black text-gray-900">rjames delossantos</td>
-                        <td class="py-5 px-8 text-sm text-gray-600">BSHM 2-204</td>
-                        <td class="py-5 px-8 text-sm text-gray-600">Science, Technology, and Society</td>
-                        <td class="py-5 px-8 text-[12px] text-gray-500 italic">Diagnosed with Acute Tonsillopharyngitis (Medical Certificate)</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="py-5 px-8 text-sm text-gray-500">24/02/2026</td>
-                        <td class="py-5 px-8 text-sm font-black text-gray-900">richie lumits</td>
-                        <td class="py-5 px-8 text-sm text-gray-600">BSTM 3-203</td>
-                        <td class="py-5 px-8 text-sm text-gray-600">Strategic Management</td>
-                        <td class="py-5 px-8 text-[12px] text-gray-500 italic">Death of Grandfather (Death Certificate)</td>
-                    </tr>
+                <tbody id="requests-tbody" class="divide-y divide-gray-100">
+                    <tr><td colspan="10" class="py-10 text-center text-gray-400 text-sm">Loading...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+{{-- Document Modal --}}
+<div id="doc-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between p-6 border-b border-gray-100">
+            <h3 class="text-lg font-black text-gray-900">Verification Documents</h3>
+            <button onclick="closeModal()" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-600">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div id="modal-docs" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <div class="p-6 border-t border-gray-100 flex gap-3 justify-end">
+            <button onclick="approveRequest()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all">Approve</button>
+            <button onclick="rejectRequest()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all">Reject</button>
+        </div>
+    </div>
+</div>
+
+    {{-- FINAL APPROVAL TAB --}}
+    <div id="final-approval-view" class="tab-content hidden">
+        <div class="mb-6">
+            <h2 class="text-lg font-bold text-gray-800">Final Approval</h2>
+        </div>
+        @if($totalFinal == 0)
+            <div class="p-12 bg-white rounded-2xl border border-dashed border-gray-200 text-center">
+                <p class="text-gray-500 font-medium">No final approvals pending at the moment.</p>
+            </div>
+        @else
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Date</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Student</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Course</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Subject</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {{-- Will be populated when approval flow is built --}}
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
+
+    {{-- DEPARTMENT LISTS TAB --}}
+    <div id="department-lists-view" class="tab-content hidden">
+        <div id="term-selection-view">
+            <div class="mb-6">
+                <h2 class="text-lg font-bold text-gray-800">Select Exam Period</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                @foreach(['Prelim', 'Midterm', 'Prefinal', 'Final'] as $period)
+                <button onclick="showDetails('{{ $period }}')"
+                        class="text-left group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all">
+                    <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-yellow-50 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-400 group-hover:text-yellow-500">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-gray-900 text-lg">{{ $period }}</h3>
+                    <p class="text-sm text-gray-500 mt-1">View completed applications</p>
+                </button>
+                @endforeach
+            </div>
+        </div>
+
+        <div id="details-view" class="hidden">
+            <div class="flex items-center gap-6 mb-6">
+                <button onclick="showTerms()" class="flex flex-col items-center justify-center w-16 h-14 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors bg-white shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-700">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                    </svg>
+                    <span class="text-[10px] font-bold text-gray-900 mt-1 uppercase">Back</span>
+                </button>
+                <div>
+                    <h2 class="text-3xl font-black text-gray-900" id="selected-term-title">Prelim</h2>
+                    <p class="text-sm text-gray-500 mt-1">Completed special exam applications</p>
+                </div>
+                <div class="ml-auto">
+                    <button onclick="exportExcel()" class="bg-[#2ecc71] hover:bg-[#27ae60] text-white px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        Export to Excel
+                    </button>
+                </div>
+            </div>
+
+            {{-- Sub tabs --}}
+            <div class="flex border-b border-gray-200 mb-8 space-x-12">
+                <button onclick="switchSubTab(this, 'paid-table')" class="sub-tab-btn active-sub-tab border-[#F1C40F] border-b-4 py-4 text-[13px] font-black text-gray-900 tracking-wide uppercase">
+                    Paid Special Exam
+                </button>
+                <button onclick="switchSubTab(this, 'summary-table')" class="sub-tab-btn border-transparent border-b-4 py-4 text-[13px] font-bold text-gray-400 hover:text-gray-600 transition-all tracking-wide uppercase">
+                    Summary
+                </button>
+                <button onclick="switchSubTab(this, 'waived-table')" class="sub-tab-btn border-transparent border-b-4 py-4 text-[13px] font-bold text-gray-400 hover:text-gray-600 transition-all tracking-wide uppercase">
+                    Waived Fee
+                </button>
+            </div>
+
+            {{-- Paid Table --}}
+            <div id="paid-table" class="sub-content bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Date Applied</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Student Name</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Section</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Subject</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Subject Code</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Program</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paid-tbody" class="divide-y divide-gray-100">
+                        <tr><td colspan="6" class="py-10 text-center text-gray-400 text-sm">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Summary Table --}}
+            <div id="summary-table" class="sub-content hidden bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Subject Code</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Subject</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase text-right">Count</th>
+                        </tr>
+                    </thead>
+                    <tbody id="summary-tbody" class="divide-y divide-gray-100">
+                        <tr><td colspan="3" class="py-10 text-center text-gray-400 text-sm">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Waived Table --}}
+            <div id="waived-table" class="sub-content hidden bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Date</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Student Name</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Section</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Subject</th>
+                            <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody id="waived-tbody" class="divide-y divide-gray-100">
+                        <tr><td colspan="5" class="py-10 text-center text-gray-400 text-sm">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Tab switching
+function switchTab(btn, viewId) {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active-tab', 'border-[#F1C40F]', 'text-gray-900', 'font-bold');
+        b.classList.add('border-transparent', 'text-gray-500', 'font-medium');
+    });
+    btn.classList.add('active-tab', 'border-[#F1C40F]', 'text-gray-900', 'font-bold');
+    btn.classList.remove('border-transparent', 'text-gray-500', 'font-medium');
+
+    document.querySelectorAll('.tab-content').forEach(v => v.classList.add('hidden'));
+    document.getElementById(viewId).classList.remove('hidden');
+}
+
+// Sub tab switching
+function switchSubTab(btn, tableId) {
+    document.querySelectorAll('.sub-tab-btn').forEach(b => {
+        b.classList.remove('active-sub-tab', 'border-[#F1C40F]', 'text-gray-900', 'font-black');
+        b.classList.add('border-transparent', 'text-gray-400', 'font-bold');
+    });
+    btn.classList.add('active-sub-tab', 'border-[#F1C40F]', 'text-gray-900', 'font-black');
+    btn.classList.remove('border-transparent', 'text-gray-400', 'font-bold');
+
+    document.querySelectorAll('.sub-content').forEach(t => t.classList.add('hidden'));
+    document.getElementById(tableId).classList.remove('hidden');
+}
+
+let currentTerm = '';
+
+function showDetails(term) {
+    currentTerm = term;
+    document.getElementById('term-selection-view').classList.add('hidden');
+    document.getElementById('details-view').classList.remove('hidden');
+    document.getElementById('selected-term-title').innerText = term;
+    loadTableData(term);
+}
+
+function showTerms() {
+    document.getElementById('details-view').classList.add('hidden');
+    document.getElementById('term-selection-view').classList.remove('hidden');
+}
+
+function loadTableData(term) {
+    fetch(`/head/department-data?exam_type=${encodeURIComponent(term)}`)
+        .then(r => r.json())
+        .then(data => {
+            // Paid table
+            const paidTbody = document.getElementById('paid-tbody');
+            const paid = data.paid;
+            if (paid.length === 0) {
+                paidTbody.innerHTML = '<tr><td colspan="6" class="py-10 text-center text-gray-400 text-sm">No paid records found.</td></tr>';
+            } else {
+                paidTbody.innerHTML = paid.map(r => `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="py-5 px-8 text-sm text-gray-500">${r.date_submitted}</td>
+                        <td class="py-5 px-8 text-sm font-black text-gray-900">${r.student_name}</td>
+                        <td class="py-5 px-8 text-sm text-gray-600">${r.section}</td>
+                        <td class="py-5 px-8 text-sm text-gray-600">${r.subject}</td>
+                        <td class="py-5 px-8 text-sm text-gray-500 uppercase">${r.subject_code}</td>
+                        <td class="py-5 px-8 text-sm font-bold text-gray-600">${r.program}</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Summary table
+            const summaryTbody = document.getElementById('summary-tbody');
+            const summary = data.summary;
+            if (summary.length === 0) {
+                summaryTbody.innerHTML = '<tr><td colspan="3" class="py-10 text-center text-gray-400 text-sm">No summary data found.</td></tr>';
+            } else {
+                summaryTbody.innerHTML = summary.map(r => `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="py-5 px-8 text-sm font-bold text-gray-500 uppercase">${r.subject_code}</td>
+                        <td class="py-5 px-8 text-sm text-gray-900">${r.subject}</td>
+                        <td class="py-5 px-8 text-sm font-black text-gray-900 text-right">${r.count}</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Waived table
+            const waivedTbody = document.getElementById('waived-tbody');
+            const waived = data.waived;
+            if (waived.length === 0) {
+                waivedTbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-gray-400 text-sm">No waived records found.</td></tr>';
+            } else {
+                waivedTbody.innerHTML = waived.map(r => `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="py-5 px-8 text-sm text-gray-500">${r.date_submitted}</td>
+                        <td class="py-5 px-8 text-sm font-black text-gray-900">${r.student_name}</td>
+                        <td class="py-5 px-8 text-sm text-gray-600">${r.section}</td>
+                        <td class="py-5 px-8 text-sm text-gray-600">${r.subject}</td>
+                        <td class="py-5 px-8 text-sm text-gray-500 italic">${r.reason}</td>
+                    </tr>
+                `).join('');
+            }
+        });
+}
+
+function exportExcel() {
+    window.location.href = `/head/export-excel?exam_type=${encodeURIComponent(currentTerm)}`;
+}
+
+// Course requests
+let allRequests = @json($requests ?? []);
+let currentRequestId = null;
+
+function showCourseRequests(program) {
+    document.getElementById('course-list-view').classList.add('hidden');
+    document.getElementById('course-requests-view').classList.remove('hidden');
+    document.getElementById('course-title').innerText = program;
+
+    const filtered = allRequests.filter(r => r.program === program);
+    const tbody = document.getElementById('requests-tbody');
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" class="py-10 text-center text-gray-400 text-sm">No pending requests for this course.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(r => `
+        <tr class="hover:bg-gray-50 transition-colors">
+            <td class="py-4 px-6 text-sm font-bold text-gray-900">${r.Lname}, ${r.Fname}</td>
+            <td class="py-4 px-6 text-sm text-gray-500">${r.student_number}</td>
+            <td class="py-4 px-6 text-sm text-gray-700">${r.subject}<br><span class="text-xs text-gray-400">${r.subject_code ?? ''}</span></td>
+            <td class="py-4 px-6 text-sm text-gray-600">${r.section}</td>
+            <td class="py-4 px-6 text-sm text-gray-600">${r.exam_type ?? '-'}</td>
+            <td class="py-4 px-6 text-sm text-gray-600">${r.term}</td>
+            <td class="py-4 px-6 text-sm text-gray-500 italic">${r.reason}</td>
+            <td class="py-4 px-6 text-sm text-gray-500">${r.date_submitted}</td>
+            <td class="py-4 px-6">
+                <button onclick="viewDocs(${r.id})" class="bg-yellow-400 hover:bg-yellow-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all">
+                    View Docs
+                </button>
+            </td>
+            <td class="py-4 px-6">
+                <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full">Pending</span>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function backToCourses() {
+    document.getElementById('course-requests-view').classList.add('hidden');
+    document.getElementById('course-list-view').classList.remove('hidden');
+}
+
+function viewDocs(requestId) {
+    const r = allRequests.find(x => x.id === requestId);
+    if (!r) return;
+    currentRequestId = requestId;
+
+    const docs = [
+        { label: 'Parent ID (Front)', file: r.parent_id_front },
+        { label: 'Parent ID (Back)', file: r.parent_id_back },
+        { label: 'Parent Selfie', file: r.parent_selfie },
+        { label: 'Parent Signature', file: r.parent_signature },
+        { label: 'Medical Certificate', file: r.medical_certificate },
+        { label: 'Death Certificate', file: r.death_certificate },
+        { label: 'Supporting Document', file: r.supporting_document },
+    ].filter(d => d.file);
+
+    const container = document.getElementById('modal-docs');
+    if (docs.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 text-sm col-span-2 text-center py-8">No documents uploaded.</p>';
+    } else {
+        container.innerHTML = docs.map(d => `
+            <div class="border border-gray-100 rounded-2xl p-4">
+                <p class="text-xs font-bold text-gray-500 uppercase mb-3">${d.label}</p>
+                <img src="/storage/${d.file}" alt="${d.label}"
+                     class="w-full rounded-xl object-cover max-h-48 bg-gray-50"
+                     onerror="this.outerHTML='<div class=\'flex items-center justify-center h-32 bg-gray-50 rounded-xl\'><a href=\'/storage/${d.file}\' target=\'_blank\' class=\'text-blue-500 text-sm font-bold underline\'>View File</a></div>'">
+            </div>
+        `).join('');
+    }
+
+    document.getElementById('doc-modal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('doc-modal').classList.add('hidden');
+    currentRequestId = null;
+}
+
+function approveRequest() {
+    alert('Approve functionality coming soon! Request ID: ' + currentRequestId);
+}
+
+function rejectRequest() {
+    alert('Reject functionality coming soon! Request ID: ' + currentRequestId);
+}
+</script>
 
 </x-layouts.app>

@@ -4,20 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
     public function login(Request $request)
 {
     $request->validate([
-        'email' => 'required',
-        'password' => 'required',
-        'role' => 'required'
+        'email' => 'required|email',
+        'password' => 'required'
     ]);
 
     $email = $request->email;
-    $password = md5($request->password);
+    $password = $request->password;
 
     $user = DB::table('users')
         ->where('email', $email)
@@ -26,32 +24,35 @@ class LoginController extends Controller
 
     if ($user) {
 
-        // 🔥 FIX ROLE NAME (IMPORTANT)
-        if ($user->role !== $request->role) {
-            return back()->with('error', 'Wrong role selected');
-        }
-
         session([
             'user_id' => $user->id,
             'role' => $user->role
         ]);
 
-        // 🔥 REDIRECT BASED ON ROLE
-        if ($user->role == 'student') {
-            return redirect('/student/dashboard');
-        }
+        switch ($user->role) {
 
-        if ($user->role == 'teacher') {
-            return redirect('/teacher/dashboard');
-        }
+            case 'student':
+                return redirect()->route('student.dashboard');
 
-        if ($user->role == 'program_head') {
-            return redirect('/program-head/dashboard');
+            case 'teacher':
+                return redirect()->route('teacher.dashboard');
+
+            case 'program_head':
+                return redirect()->route('head.dashboard');
+
+            case 'registrar':
+                return redirect()->route('registrar.dashboard');
         }
     }
 
-    return back()->with('error', 'Invalid login credentials');
+    return back()->with('error', 'Invalid email or password');
 }
 
-}
 
+
+    public function logout()
+    {
+        session()->flush();
+        return redirect('/');
+    }
+}

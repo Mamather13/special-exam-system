@@ -22,6 +22,10 @@ protected $fillable = [
     'death_certificate',
     'supporting_document',
     'payment_status'
+    'face_verified',
+    'liveness_passed',
+    'match_score',
+    'face_verified_at',
 ];
 
 

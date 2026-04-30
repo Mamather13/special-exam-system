@@ -36,6 +36,12 @@ class RequestController extends Controller
         /* ======================
            3. HANDLE FILE UPLOADS
         ====================== */
+        if (!$request->input('face_verified') || $request->input('face_verified') == '0') {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Parent face verification must be completed before submitting.');
+        }
+
         $parent_id_front = $request->file('parent_id_front')?->store('parent_id', 'public');
         $parent_id_back  = $request->file('parent_id_back')?->store('parent_id', 'public');
         $parent_selfie   = $request->file('parent_selfie')?->store('parent_id', 'public');
@@ -85,6 +91,10 @@ class RequestController extends Controller
             'payment_status'      => $payment_status,
             'status'              => 'pending',
             'date_submitted'      => now(),
+            'face_verified'       => $request->input('face_verified', 0),
+            'liveness_passed'     => $request->input('liveness_passed', 0),
+            'match_score'         => $request->input('match_score', 0),
+            'face_verified_at'    => $request->input('face_verified') ? now() : null,
         ]);
 
         return redirect()->back()->with('success', 'Request submitted successfully!');

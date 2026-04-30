@@ -8,12 +8,19 @@ use Illuminate\Support\Facades\DB;
 class StudentController extends Controller
 {
     public function dashboard()
-    {
-        // For now, show all requests joined with student info
-        // Later this will filter by logged-in student session
+{
+    $userId = session('user_id');
+
+    // Get the student record for the logged-in user
+    $student = DB::table('students')->where('user_id', $userId)->first();
+
+    $requests = collect();
+
+    if ($student) {
         $requests = DB::table('requests')
             ->join('students', 'requests.student_id', '=', 'students.id')
             ->join('users', 'students.user_id', '=', 'users.id')
+            ->where('requests.student_id', $student->id)
             ->select(
                 'requests.*',
                 'students.student_number',
@@ -24,9 +31,10 @@ class StudentController extends Controller
             )
             ->orderBy('requests.date_submitted', 'desc')
             ->get();
-
-        return view('student-dashboard', compact('requests'));
     }
+
+    return view('student-dashboard', compact('requests'));
+}
 
     public function getSubjects(Request $request)
     {

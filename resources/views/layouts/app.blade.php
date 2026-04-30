@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EXAMPASS</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 </head>
 <body class="bg-[#f9fafb] text-gray-800 font-sans leading-relaxed antialiased">
 
@@ -81,5 +82,27 @@
         {{ $slot }}
     </main>
 
+    @livewireScripts
+    @stack('scripts')
+    <script>
+    // Global face verification helpers
+    function handleIdFrontUpload(input) {
+        if (!input.files || !input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            sessionStorage.setItem('idFrontBase64', e.target.result);
+            const preview = document.getElementById('id-front-preview');
+            if (preview) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    document.addEventListener('clear-id-storage', () => {
+        sessionStorage.removeItem('idFrontBase64');
+    });
+    </script>
 </body>
 </html>

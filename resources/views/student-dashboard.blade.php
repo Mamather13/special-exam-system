@@ -18,6 +18,11 @@
             {{ session('success') }}
         </div>
     @endif
+    @if(session('error'))
+        <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl font-medium">
+            {{ session('error') }}
+        </div>
+    @endif
 
     {{-- Empty State --}}
     <div id="emptyState" class="{{ $requests->isEmpty() ? '' : 'hidden' }} flex flex-col items-center justify-center py-24 border-2 border-dashed border-gray-200 rounded-[2.5rem] bg-gray-50/30">
@@ -194,23 +199,13 @@
                 <div class="space-y-5">
                     <h3 class="text-[15px] font-bold text-gray-800 uppercase tracking-wider">Parent Consent & Documents</h3>
 
-                    <div class="space-y-1">
-                        <label class="block text-sm font-medium text-gray-700">Parent ID (Front)</label>
-                        <input type="file" name="parent_id_front" accept=".jpg,.jpeg,.png,.pdf"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none">
-                    </div>
+                    {{-- FACE VERIFICATION COMPONENT --}}
+                    <livewire:parent-verification />
 
-                    <div class="space-y-1">
-                        <label class="block text-sm font-medium text-gray-700">Parent ID (Back)</label>
-                        <input type="file" name="parent_id_back" accept=".jpg,.jpeg,.png,.pdf"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none">
-                    </div>
-
-                    <div class="space-y-1">
-                        <label class="block text-sm font-medium text-gray-700">Parent Selfie with ID</label>
-                        <input type="file" name="parent_selfie" accept=".jpg,.jpeg,.png,.pdf"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none">
-                    </div>
+                    {{-- Hidden inputs filled by the Livewire component after verification --}}
+                    <input type="hidden" name="face_verified"   id="face_verified_input"   value="0">
+                    <input type="hidden" name="liveness_passed" id="liveness_passed_input" value="0">
+                    <input type="hidden" name="match_score"     id="match_score_input"     value="0">
 
                     <div class="space-y-1">
                         <label class="block text-sm font-medium text-gray-700">Parent Signature <span class="text-red-500">*</span></label>
@@ -292,18 +287,30 @@
 {{-- Dynamic Subject Load Script --}}
 <script>
 // Load programs on page load
-fetch('/get-programs')
-    .then(r => r.json())
-    .then(data => {
-        const programSelect = document.getElementById('program');
-        programSelect.innerHTML = '<option value="">Select Program</option>';
-        data.forEach(program => {
-            let option = document.createElement('option');
-            option.value = program;
-            option.textContent = program;
-            programSelect.appendChild(option);
+document.addEventListener("DOMContentLoaded", function () {
+
+    fetch('/get-programs')
+        .then(res => res.json())
+        .then(data => {
+
+            let program = document.getElementById("program");
+
+            program.innerHTML = '<option value="">Select Program</option>';
+
+            data.forEach(p => {
+                let opt = document.createElement("option");
+                opt.value = p;
+                opt.textContent = p;
+                program.appendChild(opt);
+            });
+
+        })
+        .catch(error => {
+            console.error("Error loading programs:", error);
         });
-    });
+
+});
+
 
 function refreshSections() {
     const program   = document.getElementById('program').value;
@@ -375,6 +382,18 @@ document.getElementById('section').addEventListener('change', refreshSubjects);
 document.getElementById('subject').addEventListener('change', function() {
     const code = this.options[this.selectedIndex]?.getAttribute('data-code') || '';
     document.getElementById('subject_code').value = code;
+});
+</script>
+
+{{-- Face verification result listener --}}
+<script>
+document.addEventListener('livewire:initialized', () => {
+    Livewire.on('verification-complete', (payload) => {
+        const data = Array.isArray(payload) ? payload[0] : payload;
+        document.getElementById('face_verified_input').value   = data.faceVerified   ? '1' : '0';
+        document.getElementById('liveness_passed_input').value = data.livenessPassed ? '1' : '0';
+        document.getElementById('match_score_input').value     = data.matchScore ?? 0;
+    });
 });
 </script>
 
