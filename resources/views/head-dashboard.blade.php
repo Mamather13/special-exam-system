@@ -1,3 +1,4 @@
+
 <x-layouts.app>
 <div class="max-w-7xl mx-auto p-8 font-sans">
 
@@ -97,9 +98,40 @@
                         <th class="py-4 px-6 text-[12px] font-bold text-gray-900 uppercase">Action</th>
                     </tr>
                 </thead>
-                <tbody id="requests-tbody" class="divide-y divide-gray-100">
-                    <tr><td colspan="10" class="py-10 text-center text-gray-400 text-sm">Loading...</td></tr>
-                </tbody>
+                <tbody class="divide-y divide-gray-100">
+    @foreach($finalApplications as $app)
+    <tr class="hover:bg-gray-50 transition-colors">
+        <td class="py-5 px-8 text-sm text-gray-500">
+            {{ \Carbon\Carbon::parse($app->date_submitted)->format('M d, Y') }}
+        </td>
+        <td class="py-5 px-8 text-sm font-bold text-gray-900">
+            {{ $app->Lname }}, {{ $app->Fname }}
+        </td>
+        <td class="py-5 px-8 text-sm text-gray-500">{{ $app->program }}</td>
+        <td class="py-5 px-8 text-sm text-gray-500">
+            {{ $app->subject }}<br>
+            <span class="text-xs text-gray-400">{{ $app->subject_code }}</span>
+        </td>
+        <td class="py-5 px-8">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">
+                Pending Final Approval
+            </span>
+        </td>
+        <td class="py-5 px-8">
+            <div class="flex gap-2">
+                <a href="/head/final-approve/{{ $app->id }}"
+                   class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all">
+                   Approve
+                </a>
+                <a href="/head/reject/{{ $app->id }}"
+                   class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all">
+                   Reject
+                </a>
+            </div>
+        </td>
+    </tr>
+    @endforeach
+</tbody>
             </table>
         </div>
     </div>
@@ -143,10 +175,51 @@
                             <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Course</th>
                             <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Subject</th>
                             <th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Status</th>
+<th class="py-5 px-8 text-[13px] font-bold text-gray-900 uppercase">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        {{-- Will be populated when approval flow is built --}}
+                        @foreach($finalApplications as $app)
+<tr class="hover:bg-gray-50 transition-colors">
+    <td class="py-5 px-8 text-sm text-gray-500">
+        {{ \Carbon\Carbon::parse($app->date_submitted)->format('M d, Y') }}
+    </td>
+    <td class="py-5 px-8 text-sm font-bold text-gray-900">
+        {{ $app->Lname }}, {{ $app->Fname }}
+    </td>
+    <td class="py-5 px-8 text-sm text-gray-500">{{ $app->program }}</td>
+    <td class="py-5 px-8 text-sm text-gray-500">
+        {{ $app->subject }}
+        <span class="block text-xs text-gray-400">{{ $app->subject_code }}</span>
+    </td>
+    <td class="py-5 px-8">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">
+            Pending Final
+        </span>
+    </td>
+    <td class="py-5 px-8">
+        <div class="flex gap-2">
+            <button onclick="openFinalModal(
+                '{{ $app->id }}',
+                '{{ $app->Fname }} {{ $app->Lname }}',
+                '{{ $app->subject }}',
+                '{{ $app->or_number }}',
+                '{{ $app->amount_paid }}',
+                '{{ $app->receipt_path }}',
+                '{{ $app->parent_id_front }}',
+                '{{ $app->parent_id_back }}',
+                '{{ $app->parent_signature }}',
+                '{{ $app->parent_selfie }}',
+                '{{ $app->medical_certificate }}',
+                '{{ $app->death_certificate }}',
+                '{{ $app->supporting_document }}'
+            )" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all">
+                View Docs
+            </button>
+        </div>
+    </td>
+</tr>
+@endforeach
                     </tbody>
                 </table>
             </div>
@@ -264,6 +337,56 @@
             </div>
         </div>
     </div>
+    {{-- FINAL APPROVAL DOCUMENT MODAL --}}
+<div id="final-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between p-6 border-b border-gray-100">
+            <div>
+                <h3 class="text-lg font-black text-gray-900" id="final-modal-name">Student Name</h3>
+                <p class="text-sm text-gray-400" id="final-modal-subject">Subject</p>
+            </div>
+            <button onclick="closeFinalModal()" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-600">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        {{-- Payment Info --}}
+        <div class="px-6 pt-6">
+            <h4 class="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">Payment Information</h4>
+            <div class="grid grid-cols-2 gap-4 bg-green-50 rounded-2xl p-4 border border-green-100">
+                <div>
+                    <p class="text-xs text-gray-500">OR Number</p>
+                    <p class="font-bold text-gray-900" id="final-or-number">—</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-500">Amount Paid</p>
+                    <p class="font-bold text-green-600" id="final-amount">—</p>
+                </div>
+            </div>
+            {{-- Receipt --}}
+            <div class="mt-3" id="final-receipt-container">
+                <p class="text-xs text-gray-500 mb-1">Official Receipt</p>
+                <img id="final-receipt-img" src="" alt="Receipt"
+                    class="w-full max-h-48 object-contain rounded-xl border border-gray-200 bg-gray-50">
+            </div>
+        </div>
+
+        {{-- Documents --}}
+        <div class="p-6">
+            <h4 class="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">Verification Documents</h4>
+            <div id="final-modal-docs" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        {{-- Actions --}}
+        <div class="p-6 border-t border-gray-100 flex gap-3 justify-end">
+            <button onclick="closeFinalModal()" class="px-6 py-2.5 rounded-xl font-bold text-sm border border-gray-200 hover:bg-gray-50 transition-all">Cancel</button>
+            <button id="final-reject-btn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all">Reject</button>
+            <button id="final-approve-btn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all">Approve & Schedule</button>
+        </div>
+    </div>
+</div>
 
 </div>
 
@@ -456,6 +579,55 @@ function approveRequest() {
 
 function rejectRequest() {
     alert('Reject functionality coming soon! Request ID: ' + currentRequestId);
+}
+function openFinalModal(id, name, subject, orNumber, amount, receiptPath, idFront, idBack, signature, selfie, medical, death, supporting) {
+    document.getElementById('final-modal-name').textContent = name;
+    document.getElementById('final-modal-subject').textContent = subject;
+    document.getElementById('final-or-number').textContent = orNumber || '—';
+    document.getElementById('final-amount').textContent = amount ? '₱' + amount : '—';
+
+    // Receipt
+    const receiptContainer = document.getElementById('final-receipt-container');
+    const receiptImg = document.getElementById('final-receipt-img');
+    if (receiptPath) {
+        receiptImg.src = '/storage/' + receiptPath;
+        receiptContainer.classList.remove('hidden');
+    } else {
+        receiptContainer.classList.add('hidden');
+    }
+
+    // Documents
+    const docs = [
+        { label: 'Parent ID Front',  path: idFront },
+        { label: 'Parent ID Back',   path: idBack },
+        { label: 'Parent Signature', path: signature },
+        { label: 'Parent Selfie',    path: selfie },
+        { label: 'Medical Certificate', path: medical },
+        { label: 'Death Certificate',   path: death },
+        { label: 'Supporting Document', path: supporting },
+    ];
+
+    const container = document.getElementById('final-modal-docs');
+    container.innerHTML = docs
+        .filter(d => d.path)
+        .map(d => `
+            <div class="rounded-xl border border-gray-100 overflow-hidden">
+                <p class="text-xs font-bold text-gray-500 px-3 py-2 bg-gray-50">${d.label}</p>
+                <img src="/storage/${d.path}" alt="${d.label}"
+                    class="w-full max-h-48 object-contain bg-white p-2"
+                    onerror="this.src=''; this.parentElement.innerHTML += '<p class=\'text-xs text-red-400 p-2\'>File not found</p>'">
+            </div>
+        `).join('');
+
+    // Approve/Reject buttons
+    document.getElementById('final-approve-btn').onclick = () => window.location.href = '/head/final-approve/' + id;
+    document.getElementById('final-reject-btn').onclick  = () => window.location.href = '/head/reject/' + id;
+
+    document.getElementById('final-modal').classList.remove('hidden');
+}
+
+function closeFinalModal() {
+    document.getElementById('final-modal').classList.add('hidden');
 }
 </script>
 

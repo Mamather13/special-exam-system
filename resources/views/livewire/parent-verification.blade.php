@@ -384,7 +384,7 @@
                 const allDone  = this.challenges.every(c => c.done);
                 const avgScore = this.matchScores.length
                     ? Math.round(this.matchScores.reduce((a, b) => a + b, 0) / this.matchScores.length) : 0;
-                const verified = allDone && avgScore >= 75;
+                const verified = allDone && avgScore >= 50;
 
                 this.statusMessage = verified
                     ? 'Verification complete! Match: ' + avgScore + '%'

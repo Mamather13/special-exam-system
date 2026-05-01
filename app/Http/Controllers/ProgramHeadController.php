@@ -6,79 +6,44 @@ use Illuminate\Support\Facades\DB;
 class ProgramHeadController extends Controller
 {
     public function dashboard()
-{
-    $courses = DB::table('requests')
-        ->join('students', 'requests.student_id', '=', 'students.id')
-        ->select('students.program', DB::raw('count(*) as total'))
-        ->where('requests.status', 'pending')
-        ->groupBy('students.program')
-        ->get();
-
-    $totalPending = $courses->sum('total');
-
-    $totalFinal = DB::table('requests')
-        ->where('status', 'approved')
-        ->count();
-
-    // Load ALL pending requests for JavaScript filtering
-    $requests = DB::table('requests')
-        ->join('students', 'requests.student_id', '=', 'students.id')
-        ->join('users', 'students.user_id', '=', 'users.id')
-        ->where('requests.status', 'pending')
-        ->select(
-            'requests.id',
-            'requests.term',
-            'requests.school_year',
-            'requests.exam_type',
-            'requests.subject',
-            'requests.subject_code',
-            'requests.section',
-            'requests.teacher_name',
-            'requests.reason',
-            'requests.status',
-            'requests.date_submitted',
-            'requests.parent_id_front',
-            'requests.parent_id_back',
-            'requests.parent_selfie',
-            'requests.parent_signature',
-            'requests.medical_certificate',
-            'requests.death_certificate',
-            'requests.supporting_document',
-            'requests.payment_status',
-            'students.student_number',
-            'students.program',
-            'students.year_level',
-            'users.Fname',
-            'users.Lname'
-        )
-        ->orderBy('requests.date_submitted', 'desc')
-        ->get();
-
-    return view('head-dashboard', compact('courses', 'totalPending', 'totalFinal', 'requests'));
-}
-
-    public function course($program)
     {
         $courses = DB::table('requests')
             ->join('students', 'requests.student_id', '=', 'students.id')
             ->select('students.program', DB::raw('count(*) as total'))
-            ->where('requests.status', 'pending')
+            ->where('requests.status', 'pending_program_head')
             ->groupBy('students.program')
             ->get();
 
         $totalPending = $courses->sum('total');
 
-        $totalFinal = DB::table('requests')
-            ->where('status', 'approved')
-            ->count();
-
-        $requests = DB::table('requests')
+        $finalApplications = DB::table('requests')
             ->join('students', 'requests.student_id', '=', 'students.id')
             ->join('users', 'students.user_id', '=', 'users.id')
-            ->where('students.program', $program)
-            ->where('requests.status', 'pending')
+            ->where('requests.status', 'pending_final')
             ->select(
-                'requests.*',
+                'requests.id',
+                'requests.subject',
+                'requests.subject_code',
+                'requests.section',
+                'requests.term',
+                'requests.school_year',
+                'requests.exam_type',
+                'requests.teacher_name',
+                'requests.reason',
+                'requests.status',
+                'requests.date_submitted',
+                'requests.parent_id_front',
+                'requests.parent_id_back',
+                'requests.parent_selfie',
+                'requests.parent_signature',
+                'requests.medical_certificate',
+                'requests.death_certificate',
+                'requests.supporting_document',
+                'requests.payment_status',
+                'requests.or_number',
+                'requests.amount_paid',
+                'requests.receipt_path',
+                'requests.receipt_at',
                 'students.student_number',
                 'students.program',
                 'students.year_level',
@@ -88,7 +53,69 @@ class ProgramHeadController extends Controller
             ->orderBy('requests.date_submitted', 'desc')
             ->get();
 
-        return view('head-dashboard', compact('courses', 'totalPending', 'totalFinal', 'requests', 'program'));
+        $totalFinal = $finalApplications->count();
+
+        $requests = DB::table('requests')
+            ->join('students', 'requests.student_id', '=', 'students.id')
+            ->join('users', 'students.user_id', '=', 'users.id')
+            ->where('requests.status', 'pending_program_head')
+            ->select(
+                'requests.id',
+                'requests.term',
+                'requests.school_year',
+                'requests.exam_type',
+                'requests.subject',
+                'requests.subject_code',
+                'requests.section',
+                'requests.teacher_name',
+                'requests.reason',
+                'requests.status',
+                'requests.date_submitted',
+                'requests.parent_id_front',
+                'requests.parent_id_back',
+                'requests.parent_selfie',
+                'requests.parent_signature',
+                'requests.medical_certificate',
+                'requests.death_certificate',
+                'requests.supporting_document',
+                'requests.payment_status',
+                'students.student_number',
+                'students.program',
+                'students.year_level',
+                'users.Fname',
+                'users.Lname'
+            )
+            ->orderBy('requests.date_submitted', 'desc')
+            ->get();
+
+        return view('head-dashboard', compact('courses', 'totalPending', 'totalFinal', 'requests', 'finalApplications'));
+    }
+
+    public function approve($id)
+    {
+        DB::table('requests')
+            ->where('id', $id)
+            ->update(['status' => 'pending_teacher']);
+
+        return back()->with('success', 'Forwarded to Teacher.');
+    }
+
+    public function finalApprove($id)
+    {
+        DB::table('requests')
+            ->where('id', $id)
+            ->update(['status' => 'scheduled']);
+
+        return back()->with('success', 'Request scheduled successfully.');
+    }
+
+    public function reject($id)
+    {
+        DB::table('requests')
+            ->where('id', $id)
+            ->update(['status' => 'rejected']);
+
+        return back()->with('error', 'Request rejected.');
     }
 
     public function departmentData(Request $request)

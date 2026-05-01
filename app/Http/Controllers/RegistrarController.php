@@ -11,20 +11,20 @@ class RegistrarController extends Controller
    public function dashboard()
 {
     $pendingCount = DB::table('requests')
-        ->where('status', 'pending')
+        ->where('status', 'pending_registrar')
         ->count();
 
     // TERTIARY (BS courses)
     $tertiaryCount = DB::table('requests')
         ->join('students', 'requests.student_id', '=', 'students.id')
-        ->where('requests.status', 'pending')
+        ->where('requests.status', 'pending_registrar')
         ->where('students.program', 'LIKE', '%BS%')
         ->count();
 
     // SHS (non-BS)
     $shsCount = DB::table('requests')
         ->join('students', 'requests.student_id', '=', 'students.id')
-        ->where('requests.status', 'pending')
+        ->where('requests.status', 'pending_registrar')
         ->where('students.program', 'NOT LIKE', '%BS%')
         ->count();
 
@@ -39,7 +39,7 @@ public function courses($type)
 {
     $query = DB::table('requests')
         ->join('students', 'requests.student_id', '=', 'students.id')
-        ->where('requests.status', 'pending');
+        ->where('requests.status', 'pending_registrar');
 
     // 🔥 FILTER BASED ON TYPE
     if ($type === 'tertiary') {
@@ -61,7 +61,7 @@ public function submissions($course)
     $requests = DB::table('requests')
         ->join('students', 'requests.student_id', '=', 'students.id')
         ->where('students.program', $course)
-        ->where('requests.status', 'pending')
+        ->where('requests.status', 'pending_registrar')
         ->select('requests.*', 'students.student_number')
         ->get();
 
@@ -69,19 +69,24 @@ public function submissions($course)
 }
     public function approve($id)
     {
-        $request = ExamRequest::findOrFail($id);
-        $request->status = 'approved';
-        $request->save();
+        DB::table('requests')
+        ->where('id', $id)
+        ->update([
+            'status' => 'pending_program_head'
+        ]);
 
-        return redirect()->back()->with('success', 'Request approved');
+    return back()->with('success', 'Request approved and forwarded to Program Head.');
+
     }
 
     public function reject($id)
     {
-        $request = ExamRequest::findOrFail($id);
-        $request->status = 'rejected';
-        $request->save();
+        DB::table('requests')
+        ->where('id', $id)
+        ->update([
+            'status' => 'rejected'
+        ]);
 
-        return redirect()->back()->with('error', 'Request rejected');
+    return back()->with('error', 'Request rejected.');
     }
 }

@@ -15,7 +15,7 @@ class TeacherController extends Controller
         // Get subjects with pending request counts for this teacher
         $subjects = DB::table('requests')
             ->where('teacher_name', $teacherName)
-            ->where('status', 'pending')
+            ->where('status', 'pending_teacher')
             ->select('subject', 'subject_code', DB::raw('count(*) as total'))
             ->groupBy('subject', 'subject_code')
             ->get();
@@ -27,7 +27,7 @@ class TeacherController extends Controller
             ->join('students', 'requests.student_id', '=', 'students.id')
             ->join('users', 'students.user_id', '=', 'users.id')
             ->where('requests.teacher_name', $teacherName)
-            ->where('requests.status', 'pending')
+            ->where('requests.status', 'pending_teacher')
             ->select(
                 'requests.id',
                 'requests.term',
@@ -61,14 +61,24 @@ class TeacherController extends Controller
     }
 
     public function approve($id)
-    {
-        DB::table('requests')->where('id', $id)->update(['status' => 'approved_by_teacher']);
-        return response()->json(['success' => true]);
-    }
+{
+    DB::table('requests')
+        ->where('id', $id)
+        ->update([
+            'status' => 'pending_final'
+        ]);
+
+    return back()->with('success', 'Request fully approved.');
+}
 
     public function reject($id)
-    {
-        DB::table('requests')->where('id', $id)->update(['status' => 'rejected']);
-        return response()->json(['success' => true]);
-    }
+{
+    DB::table('requests')
+        ->where('id', $id)
+        ->update([
+            'status' => 'rejected'
+        ]);
+
+    return back()->with('error', 'Request rejected.');
+}
 }

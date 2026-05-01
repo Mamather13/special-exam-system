@@ -1,44 +1,39 @@
 <?php
-
 namespace App\Livewire;
-
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Session;
 
 class ParentVerification extends Component
 {
     use WithFileUploads;
 
-    // Uploaded files
     public $parentIdFront;
     public $parentIdBack;
     public $parentSignature;
     public $parentSelfie;
     public $idFrontTempUrl;
 
-    // Step tracking: 'upload' | 'liveness' | 'done'
-    public string $step = 'upload';  // ← only declared ONCE
+    public string $step = 'upload';
 
-    // Verification results
     public bool  $faceVerified       = false;
     public float $matchScore         = 0.0;
     public bool  $livenessPassedFlag = false;
 
     protected $rules = [
-        'parentIdFront'  => 'nullable|image|max:20480',
-        'parentIdBack'   => 'nullable|image|max:20480',
-        'parentSignature'=> 'nullable|image|max:20480',
+        'parentIdFront'   => 'nullable|image|max:20480',
+        'parentIdBack'    => 'nullable|image|max:20480',
+        'parentSignature' => 'nullable|image|max:20480',
     ];
 
     public function proceedToLiveness(): void
-{
-    $this->validate([
-        'parentIdFront' => 'required|image|max:20480',
-    ]);
-     $this->idFrontTempUrl = $this->parentIdFront->temporaryUrl();
-
-    $this->step = 'liveness';
-}
+    {
+        $this->validate([
+            'parentIdFront' => 'required|image|max:20480',
+        ]);
+        $this->idFrontTempUrl = $this->parentIdFront->temporaryUrl();
+        $this->step = 'liveness';
+    }
 
     public function completeFaceVerification(array $payload): void
     {
@@ -46,6 +41,14 @@ class ParentVerification extends Component
         $this->livenessPassedFlag = (bool)  ($payload['livenessPassed'] ?? false);
         $this->matchScore         = (float) ($payload['matchScore']     ?? 0);
         $this->step               = 'done';
+
+        $paths = [];
+        if ($this->parentIdFront)   $paths['parent_id_front']  = $this->parentIdFront->store('parent_id', 'public');
+        if ($this->parentIdBack)    $paths['parent_id_back']   = $this->parentIdBack->store('parent_id', 'public');
+        if ($this->parentSignature) $paths['parent_signature'] = $this->parentSignature->store('parent_id', 'public');
+        if ($this->parentSelfie)    $paths['parent_selfie']    = $this->parentSelfie->store('parent_id', 'public');
+
+        Session::put('verification_files', $paths);
 
         $this->dispatch('verification-complete', [
             'faceVerified'   => $this->faceVerified,
@@ -64,13 +67,10 @@ class ParentVerification extends Component
         $this->parentIdBack       = null;
         $this->parentSignature    = null;
         $this->parentSelfie       = null;
+        Session::forget('verification_files');
         $this->dispatch('clear-id-storage');
     }
 
-    /**
-     * Exposes the uploaded ID front as a temporary URL
-     * so face-api.js can load it directly — no base64/sessionStorage needed.
-     */
     public function getIdFrontUrlProperty(): ?string
     {
         return $this->parentIdFront?->temporaryUrl();

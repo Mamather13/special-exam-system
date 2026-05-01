@@ -140,9 +140,18 @@
                         View Docs
                     </button>
                 </td>
-                <td class="py-4 px-6" id="action-${r.id}">
-                    <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full">Pending</span>
-                </td>
+                <!-- 🔥 ACTION BUTTONS HERE -->
+    <td class="py-4 px-6 space-x-2">
+        <button onclick="approveRequest(${r.id})"
+            class="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1 rounded">
+            Approve
+        </button>
+
+        <button onclick="rejectRequest(${r.id})"
+            class="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded">
+            Reject
+        </button>
+    </td>
             </tr>
         `).join('');
     }
@@ -189,39 +198,15 @@
         currentRequestId = null;
     }
 
-    function approveRequest() {
-        if (!currentRequestId) return;
-        fetch(`/teacher/approve/${currentRequestId}`, {
-            method: 'POST',
-            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById(`action-${currentRequestId}`).innerHTML =
-                    '<span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">✓ Approved</span>';
-                showToast('Request approved successfully!', 'green');
-                closeModal();
-            }
-        });
-    }
+    function approveRequest(id) {
+    window.location.href = `/teacher/approve/${id}`;
+}
 
-    function rejectRequest() {
-        if (!currentRequestId) return;
-        fetch(`/teacher/reject/${currentRequestId}`, {
-            method: 'POST',
-            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById(`action-${currentRequestId}`).innerHTML =
-                    '<span class="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full">✗ Rejected</span>';
-                showToast('Request rejected.', 'red');
-                closeModal();
-            }
-        });
+function rejectRequest(id) {
+    if (confirm("Reject this request?")) {
+        window.location.href = `/teacher/reject/${id}`;
     }
+}
 
     function showToast(message, color) {
         const toast = document.getElementById('toast');

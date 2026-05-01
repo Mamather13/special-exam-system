@@ -88,10 +88,20 @@
                             </td>
 
                             <!-- Status -->
-                            <td class="p-3 text-right">
-                                <span class="text-gray-600 font-semibold">
-                                    Pending
-                                </span>
+                            <td class="p-3 text-right space-x-2">
+
+                            <!-- Approve -->
+                            <a href="{{ route('registrar.approve', $req->id) }}"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs">
+                                 Approve
+                            </a>
+
+                            <!-- Reject -->
+                            <a href="{{ route('registrar.reject', $req->id) }}"
+                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs">
+                             Reject
+                            </a>
+
                             </td>
 
                         </tr>

@@ -4,15 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Models\SpecialExam;
 
 class StudentController extends Controller
 {
+    
     public function dashboard()
-{
+ {
     $userId = session('user_id');
 
-    // Get the student record for the logged-in user
-    $student = DB::table('students')->where('user_id', $userId)->first();
+    $student = DB::table('students')
+        ->where('user_id', $userId)
+        ->first();
 
     $requests = collect();
 
@@ -34,7 +38,7 @@ class StudentController extends Controller
     }
 
     return view('student-dashboard', compact('requests'));
-}
+ }
 
     public function getSubjects(Request $request)
     {
@@ -61,4 +65,29 @@ class StudentController extends Controller
 
         return response()->json($sections);
     }
+    public function uploadReceipt(Request $request, $id)
+{
+    $request->validate([
+        'receipt' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048'
+    ]);
+
+    $file = $request->file('receipt');
+    $filename = time() . '.' . $file->getClientOriginalExtension();
+
+    $file->move(public_path('receipts'), $filename);
+
+    // save to database
+    \DB::table('requests')
+    ->where('id', $id)
+    ->update([
+        'receipt_path'  => $filename,
+        'payment_status'=> 'submitted',
+        'or_number'     => $request->or_number,
+        'amount_paid'   => 200.00,
+        'receipt_at'    => now(),
+        'status'        => 'pending_final',
+    ]);
+
+    return back()->with('success', 'Receipt uploaded successfully!');
+}
 }

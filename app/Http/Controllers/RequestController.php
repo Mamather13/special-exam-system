@@ -1,102 +1,58 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class RequestController extends Controller
 {
     public function store(Request $request)
     {
-        /* ======================
-           1. SAVE USER
-        ====================== */
-        $userId = DB::table('users')->insertGetId([
-            'Lname'      => $request->Lname,
-            'Fname'      => $request->Fname,
-            'Mname'      => $request->Mname,
-            'email'      => $request->email ?? $request->student_number . '@student.com',
-            'role'       => 'student',
-            'created_at' => now(),
-        ]);
+        $userId = session('user_id');
 
-        /* ======================
-           2. SAVE STUDENT
-        ====================== */
-        $studentId = DB::table('students')->insertGetId([
-            'user_id'        => $userId,
-            'student_number' => $request->student_number,
-            'program'        => $request->program,
-            'section'        => $request->section,
-            'year_level'     => $request->year_level,
-            'contact_number' => $request->contact_number,
-        ]);
+    // Debug - remove after fix
+    if (!$userId) {
+        return back()->with('error', 'Not logged in. Please login again.');
+    }
 
-        /* ======================
-           3. HANDLE FILE UPLOADS
-        ====================== */
-        if (!$request->input('face_verified') || $request->input('face_verified') == '0') {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Parent face verification must be completed before submitting.');
-        }
+    $student = DB::table('students')->where('user_id', $userId)->first();
+    if (!$student) {
+        // Try to find by session directly
+        return back()->with('error', 'No student for user_id: ' . $userId . '. Students user_ids: ' . DB::table('students')->pluck('user_id')->implode(','));
+    }
 
-        $parent_id_front = $request->file('parent_id_front')?->store('parent_id', 'public');
-        $parent_id_back  = $request->file('parent_id_back')?->store('parent_id', 'public');
-        $parent_selfie   = $request->file('parent_selfie')?->store('parent_id', 'public');
+        $files = Session::get('verification_files', []);
 
-        $medical_certificate = $request->file('medical_certificate')?->store('documents', 'public');
-        $death_certificate   = $request->file('death_certificate')?->store('documents', 'public');
-        $supporting_document = $request->file('supporting_document')?->store('documents', 'public');
-
-        /* ======================
-           4. SIGNATURE (BASE64)
-        ====================== */
-        $signature_file = null;
-        if ($request->signature) {
-            $signature_data = str_replace('data:image/png;base64,', '', $request->signature);
-            $signature_data = base64_decode($signature_data);
-            $signature_file = 'signatures/' . time() . '.png';
-            \Storage::disk('public')->put($signature_file, $signature_data);
-        }
-
-        /* ======================
-           5. PAYMENT LOGIC
-        ====================== */
-        $payment_status = ($medical_certificate || $death_certificate)
-            ? 'Exempted'
-            : 'Pending Payment';
-
-        /* ======================
-           6. SAVE REQUEST
-        ====================== */
         DB::table('requests')->insert([
-            'student_id'          => $studentId,
+            'student_id'          => $student->id,
             'term'                => $request->term,
             'school_year'         => $request->school_year,
-            'exam_type'           => $request->exam_type,
+            'exam_type'           => $request->exam_type ?? null,
             'subject'             => $request->subject,
             'subject_code'        => $request->subject_code,
             'section'             => $request->section,
             'teacher_name'        => $request->teacher_name,
             'reason'              => $request->reason_type,
-            'parent_id_front'     => $parent_id_front,
-            'parent_id_back'      => $parent_id_back,
-            'parent_selfie'       => $parent_selfie,
-            'parent_signature'    => $signature_file,
-            'medical_certificate' => $medical_certificate,
-            'death_certificate'   => $death_certificate,
-            'supporting_document' => $supporting_document,
-            'payment_status'      => $payment_status,
-            'status'              => 'pending',
+            'status'              => 'pending_registrar',
             'date_submitted'      => now(),
-            'face_verified'       => $request->input('face_verified', 0),
-            'liveness_passed'     => $request->input('liveness_passed', 0),
-            'match_score'         => $request->input('match_score', 0),
-            'face_verified_at'    => $request->input('face_verified') ? now() : null,
+            'parent_id_front'     => $files['parent_id_front']  ?? null,
+            'parent_id_back'      => $files['parent_id_back']   ?? null,
+            'parent_signature'    => $files['parent_signature'] ?? null,
+            'parent_selfie'       => $files['parent_selfie']    ?? null,
+            'medical_certificate' => $request->file('medical_certificate')?->store('docs', 'public'),
+            'death_certificate'   => $request->file('death_certificate')?->store('docs', 'public'),
+            'supporting_document' => $request->file('supporting_document')?->store('docs', 'public'),
+            'face_verified'       => $request->face_verified ?? 0,
+            'liveness_passed'     => $request->liveness_passed ?? 0,
+            'match_score'         => $request->match_score ?? 0,
+            'face_verified_at'    => now(),
+            'payment_status'      => 'Pending Payment',
         ]);
 
-        return redirect()->back()->with('success', 'Request submitted successfully!');
+        Session::forget('verification_files');
+
+        return redirect()->route('student.dashboard')
+            ->with('success', 'Request submitted successfully!');
     }
 }

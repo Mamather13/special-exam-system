@@ -29,6 +29,7 @@ class LoginController extends Controller
             'role' => $user->role
         ]);
 
+
         switch ($user->role) {
 
             case 'student':
